@@ -12,6 +12,24 @@ module.exports = (function() {
   function avg(array) {
     return Math.round(sum(array) / array.length);
   }
+
+  function differenceArray(array) {
+    var average = avg(array);
+    return _.map(array, function(num) { return num - average; });
+  }
+
+  function squaredArray(array) {
+    return _.map(array, function(num) { return num * num; });
+  }
+
+  function variance(array) {
+    var squareDiffs = squaredArray(differenceArray(array));
+    return sum(squareDiffs) / squareDiffs.length;
+  }
+
+  function stddev(array) {
+    return Math.sqrt(variance(array));
+  }
   
   // Public interface
   var TA = {
@@ -35,17 +53,12 @@ module.exports = (function() {
         this.students[name] = new TA.Grades(grades);
       }, this);
 
-      // Average, min, max
+      // Average, min, max, standard deviation
       var classAverages = _.map(this.students, function(grades, names) { return grades.avg; });
-      this.avg = avg(classAverages);
-      this.min = _.min(classAverages);
-      this.max = _.max(classAverages);
-      
-      // Standard Deviation
-      var differences = _.map(classAverages, function(score) { return score - this.avg; }, this);
-      var squareDiffs = _.map(differences, function(difference) { return difference * difference; });
-      var variance    = sum(squareDiffs) / squareDiffs.length;
-      this.standardDev = Math.sqrt(variance);
+      this.avg          = avg(classAverages);
+      this.min          = _.min(classAverages);
+      this.max          = _.max(classAverages);
+      this.standardDev  = stddev(classAverages);
     }
   };
 
